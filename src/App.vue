@@ -6,8 +6,8 @@
           <div class="container">
             <div>
               <a href="/">
-                <p class="title">Chess Blunder Investigator (beta)</p>
-                <p class="subtitle">Generate tactics from your own lichess blunders.</p>
+                <p class="title">Lichess Tactics Generator (beta)</p>
+                <p class="subtitle">Generate tactics from your own lichess games.</p>
               </a>
             </div>
             <div id="navbarMenu" class="navbar-menu">
