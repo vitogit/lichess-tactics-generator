@@ -48,6 +48,8 @@
         </div>
       </div>
     </section>
+    
+  
   </div>
 
 </template>
@@ -65,12 +67,17 @@ export default {
   },
   methods: {
     generate() {
-      let url = `https://lichess.org/games/export/${this.username}?max=10&analysed=true&evals=true&moves=true&perfType=blitz,rapid,classical`
+      let loading = this.$loading.open({
+           canCancel: true
+      })
+      let toast = this.$toast.open('Downloading and processing games. This will take a minute')
+      let url = `https://lichess.org/games/export/${this.username}?max=50&analysed=true&evals=true&moves=true&perfType=blitz,rapid,classical`
       this.$http.get(url, {headers: {'Accept': 'application/x-ndjson'}}).then(result => {
           this.tactics = []
           let games = result.bodyText.split("\n").filter(x => x !== "").map(x => JSON.parse(x))
           let blunders = this.findBlunders(games)
           this.generateTactics(blunders)
+          loading.close()
       }, error => {
           console.error(error);
       });
