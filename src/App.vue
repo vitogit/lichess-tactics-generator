@@ -43,7 +43,7 @@
       <div class="hero-foot">
         <div class="container">
           <div class="has-text-centered">
-            Made by <a href="http://vitomd.com">@vitomd</a> with <a href="https://vuejs.org/">Vue.js</a>
+            Made by <a href="http://vitomd.com">@vitomd</a> with <a href="https://vuejs.org/">Vue.js</a> | Check all my <a href="http://vitomd.com/blog/projects/">chess related projects</a>
           </div>
         </div>
       </div>
