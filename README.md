@@ -2,6 +2,8 @@
 
 > Generate a pgn file with tactics from your own lichess games.
 
+http://chesstacticsgenerator.vitomd.com
+
 ![http://chesstacticsgenerator.vitomd.com/static/screen.png](http://chesstacticsgenerator.vitomd.com/static/screen.png)
 ## How it works?
 
