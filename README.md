@@ -38,16 +38,35 @@ The Termination header indicates the centipawn evaluation or mate.
 
 The file can be loaded in a lichess study, a chess database or app like ichess to practice tactics.
 
+## All my chess related projects
 
-## Build Setup
+#### Lichess Tactics Generator (beta)
+>  Generate tactics from your own lichess games.
+- Website: http://chesstacticsgenerator.vitomd.com/
+- Github: https://github.com/vitogit/lichess-tactics-generator
 
-``` bash
-# install dependencies
-npm install
+#### Pgn Tactics Generator
+>  Generate chess puzzles / tactics from a pgn file
+- Github:  https://github.com/vitogit/pgn-tactics-generator
 
-# serve with hot reload at localhost:8080
-npm run dev
+#### Vue Chessboard
+> Chessboard vue component to load positions, create positions and see threats
+- Github: https://github.com/vitogit/vue-chessboard
 
-# build for production with minification
-npm run build
-```
+#### Vue Chessboard Examples
+> Examples for the vue-chessboard component for Vue.js
+- Website: http://vitomd.com/vue-chessboard-examples/
+- Github: https://github.com/vitogit/vue-chessboard-examples
+
+#### Chess Guardian
+>  Answer Chess technical questions from your own games. Made in Vue.js. It uses my vue-chessboard component
+- Website: http://vitomd.com/vue-chess-guardian/
+- Github: https://github.com/vitogit/vue-chess-guardian
+
+#### Hand and Brain Chess
+>   This is a fun chess variation. The BRAIN will highlight the pieces to move. You must play the correct move as the HAND. 
+- Website: http://handandbrainchess.com
+
+#### Tactical Opportunity Chess (beta)
+>  Play chess against the computer and be alerted of a tactical opportunity.
+- Website: http://tacticalchess.vitomd.com/
