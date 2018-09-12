@@ -103,12 +103,15 @@ export default {
         let moves = blunder.game.moves.split(' ')
         let blunderMove = ''
         let result = '1-0'
+        let termination = 0
         for (let [index, move] of moves.entries()) {
           if (index == blunder.index) {
             blunderMove = moves[index]
+            termination = blunder.game.analysis[index].eval
+            termination = (typeof termination === "undefined" ? 'mate:'+blunder.game.analysis[index].mate : termination.toString())
             if ((index+1)%2 != 0) { //The blunder move was made by white. so black wins
               result = '0-1'
-            }
+            }          
             break
           }
           game.move(move)
@@ -119,11 +122,11 @@ export default {
         for (let move of tacticMoves.split(' ')) {
           game.move(move)
         }
-        game = this.addHeaders(game, blunder, index, result)
+        game = this.addHeaders(game, blunder, index, result, termination)
         this.tactics.push(game.pgn())
       }
     },
-    addHeaders(game, blunder, index, result) {
+    addHeaders(game, blunder, index, result, termination) {
       let date = new Date(blunder.game.createdAt)
       let formatDate = date.getFullYear()+'.'+(date.getMonth()+1)+'.'+date.getDate()
       game.header('Site', 'https://lichess.org/'+blunder.game.id)
@@ -132,6 +135,7 @@ export default {
       game.header('Black', blunder.game.players.black.user.id)
       game.header('SetUp', index.toString())
       game.header('Result', result)
+      game.header('Termination', termination) // Indicates the centipwans evaluation or if it's mate
       return game
     }
   },
