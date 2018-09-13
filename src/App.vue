@@ -7,7 +7,7 @@
             <div>
               <a href="/">
                 <p class="title">Lichess Tactics Generator (beta)</p>
-                <p class="subtitle">Generate tactics from your own lichess games.</p>
+                <p class="subtitle">Generate chess tactics from your own lichess games.</p>
               </a>
             </div>
             <div id="navbarMenu" class="navbar-menu">
@@ -27,11 +27,24 @@
                   <button @click="generate" class="button is-large is-primary">Generate tactics</button>
               </p>
           </b-field>
+          <div class="field has-text-centered">
+              <b-switch v-model="shortVariation">
+                  Generate short variations
+              </b-switch>
+          </div>
 
-          <div class="has-text-centered">Enter your lichess username to generate your tactics. </div>
+          <div class="has-text-centered">Enter your lichess username to generate your tactics based on blunders. </div>
           <br>
           <pre>
-            <span v-if="tactics.length==0">The pgn file will be generated here. Copy the content and save it as pgn</span>
+            <div v-if="tactics.length==0">
+              The pgn file will be generated here, copy the content and save it as pgn. 
+              It will process your last 50 games that have analysis in the blitz, rapid, classical category. 
+
+              By default the solution variation will be around 8 moves, if you want shorter variations (3 moves) click the switch "Generate short variations". Have in mind that this could generate some ambiguous tactic
+              
+              Want to know how it works? <a href="https://github.com/vitogit/lichess-tactics-generator">Click here</a> 
+              Want a more precise tactics generator but that requieres some technical knowlege? <a href="https://github.com/vitogit/pgn-tactics-generator">Pgn Tactics Generator</a> 
+            </div>
             <template  v-for="t in tactics">
               {{t}}
             </template>
@@ -61,7 +74,8 @@ export default {
   data () {
     return {
       username: 'e4Guardian',
-      tactics: []
+      tactics: [],
+      shortVariation: false
     }
   },
   methods: {
@@ -116,9 +130,14 @@ export default {
           game.move(move)
         }
         let fen = game.fen()
-        let tacticMoves = blunderMove +' '+ blunder.variation
+        let variation = blunder.variation.split(' ')
+        variation.unshift(blunderMove)
+        
+        if (this.shortVariation && !termination.includes('mate') ){
+          variation = variation.slice(0, 6);
+        }
         game = new Chess(fen)
-        for (let move of tacticMoves.split(' ')) {
+        for (let move of variation) {
           game.move(move)
         }
         game = this.addHeaders(game, blunder, index, result, termination)
@@ -154,5 +173,6 @@ export default {
   }
   pre, code {
       white-space: pre-line;
+      padding: 10px
   }
 </style>
