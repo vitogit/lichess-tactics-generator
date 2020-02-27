@@ -84,7 +84,7 @@ export default {
            canCancel: true
       })
       let toast = this.$toast.open('Downloading and processing games. This will take a minute')
-      let url = `https://lichess.org/games/export/${this.username}?max=50&analysed=true&evals=true&moves=true&perfType=blitz,rapid,classical`
+      let url = `https://lichess.org/api/games/user/${this.username}?max=50&analysed=true&evals=true&moves=true&perfType=blitz,rapid,classical`
       this.$http.get(url, {headers: {'Accept': 'application/x-ndjson'}}).then(result => {
           this.tactics = []
           let games = result.bodyText.split("\n").filter(x => x !== "").map(x => JSON.parse(x))
@@ -147,10 +147,13 @@ export default {
     addHeaders(game, blunder, index, result, termination) {
       let date = new Date(blunder.game.createdAt)
       let formatDate = date.getFullYear()+'.'+(date.getMonth()+1)+'.'+date.getDate()
+      let player_white = blunder.game.players.white.user
+      let player_black = blunder.game.players.black.user
+
       game.header('Site', 'https://lichess.org/'+blunder.game.id)
       game.header('Date', formatDate)
-      game.header('White', blunder.game.players.white.user.id)
-      game.header('Black', blunder.game.players.black.user.id)
+      game.header('White', (player_white ? player_white.id : 'Anonymous'))
+      game.header('Black', (player_black ? player_black.id : 'Anonymous'))
       game.header('SetUp', index.toString())
       game.header('Result', result)
       game.header('Termination', termination) // Indicates the centipwans evaluation or if it's mate
