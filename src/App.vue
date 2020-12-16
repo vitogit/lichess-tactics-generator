@@ -84,7 +84,7 @@ export default {
            canCancel: true
       })
       let toast = this.$toast.open('Downloading and processing games. This will take a minute')
-      let url = `https://lichess.org/api/games/user/${this.username}?max=5&analysed=true&evals=true&moves=true&perfType=blitz,rapid,classical`
+      let url = `https://lichess.org/api/games/user/${this.username}?max=50&analysed=true&evals=true&moves=true&perfType=blitz,rapid,classical`
       this.$http.get(url, {headers: {'Accept': 'application/x-ndjson'}}).then(result => {
           this.tactics = []
           let games = result.bodyText.split("\n").filter(x => x !== "").map(x => JSON.parse(x))
@@ -150,7 +150,7 @@ export default {
         variation.unshift(blunderMove)
 
         if (this.shortVariation && !termination.includes('mate') ){
-          variation = variation.slice(0, 6);
+          variation = variation.slice(0, 4);
         }
         game = new Chess(fen)
         for (let move of variation) {
