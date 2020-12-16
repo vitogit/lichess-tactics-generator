@@ -84,7 +84,7 @@ export default {
            canCancel: true
       })
       let toast = this.$toast.open('Downloading and processing games. This will take a minute')
-      let url = `https://lichess.org/api/games/user/${this.username}?max=50&analysed=true&evals=true&moves=true&perfType=blitz,rapid,classical`
+      let url = `https://lichess.org/api/games/user/${this.username}?max=5&analysed=true&evals=true&moves=true&perfType=blitz,rapid,classical`
       this.$http.get(url, {headers: {'Accept': 'application/x-ndjson'}}).then(result => {
           this.tactics = []
           let games = result.bodyText.split("\n").filter(x => x !== "").map(x => JSON.parse(x))
@@ -156,17 +156,17 @@ export default {
         for (let move of variation) {
           game.move(move)
         }
-        game = this.addHeaders(game, blunder, index, result, termination, prevtermination)
+        game = this.addHeaders(game, blunder, index, result, termination, prevtermination, blunder.index)
         this.tactics.push(game.pgn())
       }
     },
-    addHeaders(game, blunder, index, result, termination, prevtermination) {
+    addHeaders(game, blunder, index, result, termination, prevtermination, blunderindex) {
       let date = new Date(blunder.game.createdAt)
       let formatDate = date.getFullYear()+'.'+(date.getMonth()+1)+'.'+date.getDate()
       let player_white = blunder.game.players.white.user
       let player_black = blunder.game.players.black.user
 
-      game.header('Site', 'https://lichess.org/'+blunder.game.id)
+      game.header('Site', 'https://lichess.org/'+blunder.game.id+'#'+(blunderindex+1))
       game.header('Date', formatDate)
       game.header('White', (player_white ? player_white.id : 'Anonymous'))
       game.header('Black', (player_black ? player_black.id : 'Anonymous'))
