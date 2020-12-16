@@ -37,13 +37,13 @@
           <br>
           <pre>
             <div v-if="tactics.length==0">
-              The pgn file will be generated here, copy the content and save it as pgn. 
-              It will process your last 50 games that have analysis in the blitz, rapid, classical category. 
+              The pgn file will be generated here, copy the content and save it as pgn.
+              It will process your last 50 games that have analysis in the blitz, rapid, classical category.
 
               By default the solution variation will be around 8 moves, if you want shorter variations (3 moves) click the switch "Generate short variations". Have in mind that this could generate some ambiguous tactic
-              
-              Want to know how it works? <a href="https://github.com/vitogit/lichess-tactics-generator">Click here</a> 
-              Want a more precise tactics generator but that requieres some technical knowlege? <a href="https://github.com/vitogit/pgn-tactics-generator">Pgn Tactics Generator</a> 
+
+              Want to know how it works? <a href="https://github.com/vitogit/lichess-tactics-generator">Click here</a>
+              Want a more precise tactics generator but that requieres some technical knowlege? <a href="https://github.com/vitogit/pgn-tactics-generator">Pgn Tactics Generator</a>
             </div>
             <template  v-for="t in tactics">
               {{t}}
@@ -61,7 +61,7 @@
         </div>
       </div>
     </section>
-    <a href="https://github.com/vitogit/lichess-tactics-generator"><img src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" style="position: absolute; top: 0px; right: 0px; border: 0px;z-index:1000"></a>    
+    <a href="https://github.com/vitogit/lichess-tactics-generator"><img src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" style="position: absolute; top: 0px; right: 0px; border: 0px;z-index:1000"></a>
   </div>
 
 </template>
@@ -75,7 +75,7 @@ export default {
     return {
       username: 'e4Guardian',
       tactics: [],
-      shortVariation: false
+      shortVariation: true
     }
   },
   methods: {
@@ -117,22 +117,38 @@ export default {
         let blunderMove = ''
         let result = '1-0'
         let termination = 0
+        let prevtermination = 0
         for (let [index, move] of moves.entries()) {
           if (index == blunder.index) {
             blunderMove = moves[index]
+            prevtermination = blunder.game.analysis[index-1].eval
+            // The game is almost equal before the blunder
+            if (typeof prevtermination === "undefined" || prevtermination>= 150 || prevtermination <=-150) {
+              termination = "ignore"
+              break
+            }
+
             termination = blunder.game.analysis[index].eval
+
+            if (Math.abs(termination) < 200 || typeof termination === "undefined") {
+              termination = "ignore"
+              break
+            }
             termination = (typeof termination === "undefined" ? 'mate:'+blunder.game.analysis[index].mate : termination.toString())
             if ((index+1)%2 != 0) { //The blunder move was made by white. so black wins
               result = '0-1'
-            }          
+            }
             break
           }
           game.move(move)
         }
+        if (termination == "ignore") {
+          continue
+        }
         let fen = game.fen()
         let variation = blunder.variation.split(' ')
         variation.unshift(blunderMove)
-        
+
         if (this.shortVariation && !termination.includes('mate') ){
           variation = variation.slice(0, 6);
         }
@@ -140,11 +156,11 @@ export default {
         for (let move of variation) {
           game.move(move)
         }
-        game = this.addHeaders(game, blunder, index, result, termination)
+        game = this.addHeaders(game, blunder, index, result, termination, prevtermination)
         this.tactics.push(game.pgn())
       }
     },
-    addHeaders(game, blunder, index, result, termination) {
+    addHeaders(game, blunder, index, result, termination, prevtermination) {
       let date = new Date(blunder.game.createdAt)
       let formatDate = date.getFullYear()+'.'+(date.getMonth()+1)+'.'+date.getDate()
       let player_white = blunder.game.players.white.user
@@ -156,7 +172,7 @@ export default {
       game.header('Black', (player_black ? player_black.id : 'Anonymous'))
       game.header('SetUp', index.toString())
       game.header('Result', result)
-      game.header('Termination', termination) // Indicates the centipwans evaluation or if it's mate
+      game.header('Termination', 'From '+prevtermination+' to '+termination) // Indicates the centipwans evaluation or if it's mate
       return game
     }
   },
